@@ -3,57 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>프로젝트 인덱스</title>
+    <title>과학 학습지 - 지구의 자전과 공전</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 40px;
-            line-height: 1.6;
-            color: #333;
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #f4f7f6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         h1 {
-            border-bottom: 2px solid #eaecef;
-            padding-bottom: 10px;
+            text-align: center;
+            color: #333;
         }
-        h2 {
-            margin-top: 30px;
-            color: #24292e;
+        .student-info {
+            display: flex;
+            justify-content: space-between;
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
         }
-        ul {
-            list-style-type: none;
-            padding-left: 0;
+        .student-info input {
+            width: 60px;
+            padding: 5px;
+            margin-left: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
-        li {
-            margin: 8px 0;
-            padding-left: 15px;
-            border-left: 3px solid #0366d6;
+        .student-info input[type="text"] {
+            width: 100px;
         }
-        a {
-            text-decoration: none;
-            color: #0366d6;
-            font-size: 16px;
+        .question {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #ddd;
         }
-        a:hover {
-            text-decoration: underline;
-            color: #005cc5;
+        .question p {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .options label {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        textarea {
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
 
-    <h1>내 프로젝트 목록</h1>
+<div class="container">
+    <h1>[과학 학습지] 지구의 자전과 공전</h1>
+    
+    <form id="worksheetForm">
+        <!-- 학생 정보 입력 -->
+        <div class="student-info">
+            <label>학년 <input type="number" id="grade" required></label>
+            <label>반 <input type="number" id="classNum" required></label>
+            <label>번호 <input type="number" id="studentNum" required></label>
+            <label>이름 <input type="text" id="studentName" required></label>
+        </div>
 
-    <h2>Project 1</h2>
-    <ul>
-        <li><a href="project1/one.html">one.html 열기</a></li>
-        <li><a href="project1/two.html">two.html 열기</a></li>
-    </ul>
+        <!-- 객관식 문제 -->
+        <div class="question">
+            <p>1. 지구의 자전 방향으로 알맞은 것은 무엇입니까?</p>
+            <div class="options">
+                <label><input type="radio" name="q1" value="1" required> ① 동에서 서</label>
+                <label><input type="radio" name="q1" value="2"> ② 서에서 동</label>
+                <label><input type="radio" name="q1" value="3"> ③ 남에서 북</label>
+                <label><input type="radio" name="q1" value="4"> ④ 북에서 남</label>
+            </div>
+        </div>
 
-    <h2>Project 2</h2>
-    <ul>
-        <li><a href="project2/three.html">three.html 열기</a></li>
-        <li><a href="project2/four.html">four.html 열기</a></li>
-    </ul>
+        <div class="question">
+            <p>2. 다음 중 지구의 자전으로 인해 나타나는 현상으로 옳은 것은?</p>
+            <div class="options">
+                <label><input type="radio" name="q2" value="1" required> ① 계절의 변화</label>
+                <label><input type="radio" name="q2" value="2"> ② 낮과 밤의 반복</label>
+                <label><input type="radio" name="q2" value="3"> ③ 태양의 연주 운동</label>
+                <label><input type="radio" name="q2" value="4"> ④ 별의 연주 시차</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. 지구의 공전 주기는 얼마입니까?</p>
+            <div class="options">
+                <label><input type="radio" name="q3" value="1" required> ① 1일</label>
+                <label><input type="radio" name="q3" value="2"> ② 1주일</label>
+                <label><input type="radio" name="q3" value="3"> ③ 1달</label>
+                <label><input type="radio" name="q3" value="4"> ④ 1년</label>
+            </div>
+        </div>
+
+        <!-- 주관식 문제 -->
+        <div class="question">
+            <p>4. 지구의 '자전'이란 무엇인지 서술하시오.</p>
+            <textarea id="q4" placeholder="여기에 답을 적어주세요." required></textarea>
+        </div>
+
+        <div class="question">
+            <p>5. 지구에 계절의 변화가 생기는 가장 큰 원인은 지구의 어떤 운동 때문인지 쓰시오.</p>
+            <textarea id="q5" placeholder="여기에 답을 적어주세요." required></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">제출하기</button>
+    </form>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+    // Firebase App 및 Firestore 불러오기 (데이터베이스 전송을 위해 firestore 추가)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-analytics.js";
+
+    // 사용자 제공 Firebase 설정
+    const firebaseConfig = {
+        apiKey: "AIzaSyDbiRAwwulEHBudrdryNnVrJM8y0GCJi0U",
+        authDomain: "vibecoding-5d975.firebaseapp.com",
+        projectId: "vibecoding-5d975",
+        storageBucket: "vibecoding-5d975.firebasestorage.app",
+        messagingSenderId: "439501588900",
+        appId: "1:439501588900:web:c2e255e04f19f6c8f05931",
+        measurementId: "G-49N54MMN1P"
+    };
+
+    // Firebase 초기화
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const analytics = getAnalytics(app);
+
+    // 폼 제출 이벤트 처리
+    document.getElementById('worksheetForm').addEventListener('submit', async (e) => {
+        e.preventDefault(); // 페이지 새로고침 방지
+
+        // 제출 버튼 비활성화 (중복 제출 방지)
+        const submitBtn = document.querySelector('.submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.innerText = "제출 중...";
+
+        try {
+            // 학생 정보 및 답변 수집
+            const worksheetData = {
+                grade: document.getElementById('grade').value,
+                classNum: document.getElementById('classNum').value,
+                studentNum: document.getElementById('studentNum').value,
+                studentName: document.getElementById('studentName').value,
+                answers: {
+                    q1: document.querySelector('input[name="q1"]:checked').value,
+                    q2: document.querySelector('input[name="q2"]:checked').value,
+                    q3: document.querySelector('input[name="q3"]:checked').value,
+                    q4: document.getElementById('q4').value,
+                    q5: document.getElementById('q5').value
+                },
+                submittedAt: new Date()
+            };
+
+            // Firestore의 'worksheets' 컬렉션에 데이터 저장
+            await addDoc(collection(db, "worksheets"), worksheetData);
+
+            alert('학습지가 성공적으로 제출되었습니다!');
+            document.getElementById('worksheetForm').reset(); // 폼 초기화
+            
+        } catch (error) {
+            console.error("문서 추가 중 오류 발생: ", error);
+            alert('제출에 실패했습니다. 다시 시도해주세요.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "제출하기";
+        }
+    });
+</script>
 
 </body>
 </html>
