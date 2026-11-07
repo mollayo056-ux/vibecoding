@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bouncing Ball</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #e4e6eb;
+            font-family: sans-serif;
+        }
+        h2 {
+            color: #2f3640;
+            margin-bottom: 15px;
+            min-height: 30px;
+        }
+        canvas {
+            background-color: #2f3640;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            width: 600px;
+        }
+        .row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            color: #2f3640;
+            font-size: 14px;
+        }
+        input[type="text"] {
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            flex: 1;
+        }
+        input[type="text"]:focus {
+            border-color: #00a8ff;
+        }
+        button {
+            padding: 8px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            background-color: #00a8ff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0097e6;
+        }
+        input[type="range"], input[type="checkbox"], input[type="radio"] {
+            cursor: pointer;
+        }
+        label {
+            cursor: pointer;
+        }
+        
+        /* 아코디언(details) 스타일 */
+        details {
+            margin-top: 5px;
+            padding-top: 15px;
+            border-top: 1px solid #dcdde1;
+        }
+        summary {
+            cursor: pointer;
+            font-weight: bold;
+            color: #00a8ff;
+            outline: none;
+            user-select: none;
+        }
+        summary:hover {
+            color: #0097e6;
+        }
+        .accordion-content {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f5f6fa;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #2f3640;
+            line-height: 1.6;
+        }
+        .highlight {
+            color: #e84118;
+            font-weight: bold;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h2 id="canvasTitle">Bouncing Ball</h2>
+
+    <canvas id="bouncingCanvas" width="600" height="400"></canvas>
+    
+    <div class="controls">
+        <div class="row">
+            <div class="control-group" style="flex: 1;">
+                <input type="text" id="titleInput" placeholder="제목을 입력하세요">
+                <button id="changeColorBtn">공 색상 변경</button>
+            </div>
+            
+            <div class="control-group">
+                <label for="speedRange">속도:</label>
+                <input type="range" id="speedRange" min="0.1" max="3" step="0.1" value="1">
+                <span id="speedValue" style="display:inline-block; width: 35px;">1.0x</span>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="control-group">
+                <span>배경:</span>
+                <label><input type="checkbox" class="bg-checkbox" value="#ffffff"> 밝은</label>
+                <label><input type="checkbox" class="bg-checkbox" value="#7f8fa6"> 중간</label>
+                <label><input type="checkbox" class="bg-checkbox" value="#2f3640" checked> 어두운</label>
+            </div>
+
+            <div class="control-group">
+                <span>크기:</span>
+                <label><input type="radio" name="ballSize" value="10"> 작게</label>
+                <label><input type="radio" name="ballSize" value="20" checked> 보통</label>
+                <label><input type="radio" name="ballSize" value="35"> 크게</label>
+            </div>
+        </div>
+
+        <!-- 아코디언 추가 영역 -->
+        <details>
+            <summary>도움말 및 통계 보기 (클릭해서 펼치기)</summary>
+            <div class="accordion-content">
+                <strong>사용 안내:</strong>
+                <ul>
+                    <li><strong>색상 변경:</strong> 버튼을 누르면 공의 색상이 무작위로 바뀝니다.</li>
+                    <li><strong>속도 조절:</strong> 슬라이더를 움직여 공을 0.1배속부터 3배속까지 조절하세요.</li>
+                    <li><strong>배경 및 크기:</strong> 캔버스의 배경색과 공의 크기를 마음대로 바꿀 수 있습니다.</li>
+                </ul>
+                <hr style="border: 0; border-top: 1px solid #ccc; margin: 15px 0;">
+                <div>
+                    현재 공이 벽에 부딪힌 횟수: <span id="bounceCount" class="highlight">0</span> 회
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('bouncingCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        const colorBtn = document.getElementById('changeColorBtn');
+        const canvasTitle = document.getElementById('canvasTitle');
+        const titleInput = document.getElementById('titleInput');
+        const speedRange = document.getElementById('speedRange');
+        const speedValue = document.getElementById('speedValue');
+        const bgCheckboxes = document.querySelectorAll('.bg-checkbox');
+        const sizeRadios = document.querySelectorAll('input[name="ballSize"]');
+        
+        // 부딪힌 횟수를 표시할 요소
+        const bounceCountEl = document.getElementById('bounceCount');
+        let bounceCount = 0; // 바운스 횟수 저장 변수
+
+        const baseSpeedX = 5;
+        const baseSpeedY = 4;
+
+        const ball = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            radius: 20,
+            dx: baseSpeedX,
+            dy: baseSpeedY,
+            color: '#e84118'
+        };
+
+        titleInput.addEventListener('input', (e) => {
+            canvasTitle.textContent = e.target.value || 'Bouncing Ball';
+        });
+
+        colorBtn.addEventListener('click', () => {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            ball.color = color;
+        });
+
+        speedRange.addEventListener('input', (e) => {
+            const multiplier = parseFloat(e.target.value);
+            ball.dx = Math.sign(ball.dx) * (baseSpeedX * multiplier);
+            ball.dy = Math.sign(ball.dy) * (baseSpeedY * multiplier);
+            speedValue.textContent = multiplier.toFixed(1) + 'x';
+        });
+
+        bgCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    bgCheckboxes.forEach(cb => {
+                        if (cb !== e.target) cb.checked = false;
+                    });
+                    canvas.style.backgroundColor = e.target.value;
+                } else {
+                    e.target.checked = true;
+                }
+            });
+        });
+
+        sizeRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                ball.radius = parseInt(e.target.value);
+                if (ball.x + ball.radius > canvas.width) ball.x = canvas.width - ball.radius;
+                if (ball.x - ball.radius < 0) ball.x = ball.radius;
+                if (ball.y + ball.radius > canvas.height) ball.y = canvas.height - ball.radius;
+                if (ball.y - ball.radius < 0) ball.y = ball.radius;
+            });
+        });
+
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = ball.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function update() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBall();
+
+            let isBounced = false; // 이번 프레임에서 부딪혔는지 체크
+
+            // 좌우 벽 충돌
+            if (ball.x + ball.dx > canvas.width - ball.radius || ball.x + ball.dx < ball.radius) {
+                ball.dx = -ball.dx;
+                isBounced = true;
+            }
+            // 상하 벽 충돌
+            if (ball.y + ball.dy > canvas.height - ball.radius || ball.y + ball.dy < ball.radius) {
+                ball.dy = -ball.dy;
+                isBounced = true;
+            }
+
+            // 벽에 부딪혔다면 횟수 1 증가시키고 화면에 반영
+            if (isBounced) {
+                bounceCount++;
+                bounceCountEl.textContent = bounceCount;
+            }
+
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+
+            requestAnimationFrame(update);
+        }
+
+        update();
+    </script>
+</body>
+</html>
